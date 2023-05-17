@@ -30,3 +30,13 @@ Di seguito le immagini per il corretto collegamento della scheda al sensore.
 ![Connessione-1](./images/connection-1.jpeg)
 ![Connessione-2](./images/connection-2.jpeg)
 ![Connessione-3](./images/connection-3.jpeg)
+
+## Impostazioni WiFi
+Per configurare il wifi, creare il file src/secrets.py e mettere all'interno le seguenti righe:
+
+```py
+WIFI_SSID = "<ssid>"
+WIFI_PASSWORD = "<password>"
+```
+
+sostitutendo `<ssid>` e `<password>` con il nome e la password della vostra rete WiFi.
