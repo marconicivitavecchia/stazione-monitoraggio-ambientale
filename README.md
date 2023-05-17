@@ -12,3 +12,8 @@ Riferimenti:
 Il progetto attualmente prevede la lettura dei dati da un sensore [SDS011](https://nettigo.pl/attachments/398) per il rilevamento delle polveri sottili PM 2.5 e PM 10. La scheda legge ed invia anche il timestamp di lettura, leggendo l'orario da Internet con la libreria `ntptime`.
 
 I dati vengono inviati tramite il protocollo MQTT ad un broker online e successivamente trattati attraverso Python con la libreria Scikit-learn di intelligenza artificiale per analizzare correlazioni tra i dati (attualmente solo PM e orario).
+
+## Strumenti
+Per il progetto abbiamo usato:
+- [Mu Editor](https://codewith.mu/) e [Thonny IDE](https://thonny.org/) come editor e per caricare il firmware di MicroPython sulle schede ESP32.
+- per gestire la scheda in modo wireless si consiglia anche [WebREPL](https://bhave.sh/micropython-webrepl-thonny/?authuser=0)
