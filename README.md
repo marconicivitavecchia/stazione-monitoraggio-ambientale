@@ -22,3 +22,11 @@ Per il progetto abbiamo usato:
 - [Mu Editor](https://codewith.mu/) e [Thonny IDE](https://thonny.org/) come editor e per caricare il firmware di MicroPython sulle schede ESP32.
 
 - per gestire la scheda in modo wireless si consiglia anche [WebREPL](https://bhave.sh/micropython-webrepl-thonny/?authuser=0)
+
+## Connessione alla scheda
+
+Di seguito le immagini per il corretto collegamento della scheda al sensore.
+
+![Connessione-1](./images/connection-1.jpeg)
+![Connessione-2](./images/connection-2.jpeg)
+![Connessione-3](./images/connection-3.jpeg)
