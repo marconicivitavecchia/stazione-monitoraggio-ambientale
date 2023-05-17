@@ -5,6 +5,7 @@ import time
 from umqtt.simple import MQTTClient
 import struct
 import ntptime
+from secret import WIFI_SSID, WIFI_PASSWORD
 ############ INIZIALIZZAZIONE DELLA SERIALE #############################
 uart = UART(1, baudrate=9600, rx=16, tx=17)
 #########################################################################
@@ -36,7 +37,7 @@ def date_hour():
 ############ END DEFINIZIONE FUNZIONI ###################################
 
 ############ START CONNECTRING ##########################################
-wifi_connect("<ssid>", "<key>")
+wifi_connect(WIFI_SSID, WIFI_PASSWORD)
 #########################################################################
 
 ############ CONNESSIONE A MQTT #########################################
