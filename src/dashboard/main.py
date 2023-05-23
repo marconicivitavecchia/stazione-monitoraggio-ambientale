@@ -22,7 +22,7 @@ allData = mycol.find()
 
 print(allData)
 
-for x in mycol.find({"ID": "123"}):
+for x in mycol.find({"boardID": "123"}):
   timestamp = x.get("timestamp")
   pm10 = x.get("PM10")
   pm25 = x.get("PM25")

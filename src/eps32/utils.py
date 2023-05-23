@@ -42,3 +42,7 @@ def date_time():
     # anno, mese, giorno, ora, minuti, secondi, week_day, year_day = time.localtime()
     return date_time
 
+def get_sensor_id(dust_sensor):
+    id1 = hex(dust_sensor.id1)
+    id2 = hex(dust_sensor.id2)
+    return id_sensor = id1[2:].upper() + id2[2:].upper()
