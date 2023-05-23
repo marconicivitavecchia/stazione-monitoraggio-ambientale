@@ -33,7 +33,7 @@ import gc
 gc.collect()
 
 from config import WIFI_SSID, WIFI_PASSWORD  # secret configuration variables
-from utils import unique_id, wifi_connect, random_string, date_time, get_sensor_id
+from utils import bin2hex, wifi_connect, random_string, date_time, get_sensor_id
 import ujson
 import time
 
@@ -66,8 +66,8 @@ pmSensorID = get_sensor_id(dust_sensor)
 print(f"Connecting to WiFi {WIFI_SSID}...", end="")
 (ip, wlan_mac) = wifi_connect(WIFI_SSID, WIFI_PASSWORD)
 print(" Connected!")
-print(f"ip: {ip}, mac: {unique_id(wlan_mac)}")
-esp32_unique_id = unique_id(wlan_mac)
+print(f"ip: {ip}, mac: {bin2hex(wlan_mac)}")
+esp32_unique_id = bin2hex(wlan_mac)
 
 # MQTT init
 from umqtt.simple import MQTTClient

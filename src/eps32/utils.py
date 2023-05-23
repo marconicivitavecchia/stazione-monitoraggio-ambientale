@@ -12,9 +12,9 @@ def random_string(length=8):
         x += 1
     return _randomstring
 
-def unique_id(wlan_mac):
+def bin2hex(bin):
     import ubinascii
-    return ubinascii.hexlify(wlan_mac).decode()
+    return ubinascii.hexlify(bin).decode()
 
 
 def wifi_connect(ssid, key):
