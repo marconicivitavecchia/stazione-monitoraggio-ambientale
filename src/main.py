@@ -1,112 +1,99 @@
-from machine import UART
-import sds011
-import network
+"""
+IIS Marconi Civitavecchia
+A.S. 2022/2023
+Teacher course Python-IoT-AI
+
+ScuolaFutura codes:
+- ID.120087 Modulo 1: Python
+- ID.120182 Modulo 2: IoT
+- ID.120238 Modulo 3: AI
+
+Link GitHub: https://github.com/marconicivitavecchia/stazione-monitoraggio-ambientale
+
+Credits
+MicroPython IoT Weather Station Example for Wokwi.com
+https://wokwi.com/arduino/projects/322577683855704658
+
+OTA updater for ESP32 running Micropython by David Flory
+Tutorial: https://randomnerdtutorials.com/esp32-esp8266-micropython-ota-updates/
+"""
+
+# Manage debug
+import esp
+esp.osdebug(None)  # turn off vendor O/S debugging messages
+# esp.osdebug(0)          # redirect vendor O/S debugging messages to UART(0)
+
+# Run Garbage Collector
+import gc
+gc.collect()
+
+from config import WIFI_SSID, WIFI_PASSWORD  # secret configuration variables
+from utils import unique_id, wifi_connect, random_string, date_time
+import ujson
 import time
-from umqtt.simple import MQTTClient
-import struct
-import ntptime
-from secret import WIFI_SSID, WIFI_PASSWORD
-############ INIZIALIZZAZIONE DELLA SERIALE #############################
-uart = UART(1, baudrate=9600, rx=16, tx=17)
-#########################################################################
 
-############ START DEFINIZIONE FUNZIONI #################################
-# wifi init
-def wifi_connect(ssid, key):
-    sta_if = network.WLAN(network.STA_IF)
-    print("Connecting to WiFi")
-    sta_if.active(True)
-    sta_if.connect(ssid, key)
-    while not sta_if.isconnected():
-        print(".", end="")
-        time.sleep(0.1)
-    print(" Connected!")
-
-# DATA E ORA:
-# Per il tempo viene restituita la tupla:
-# (year, month, mday, hour, minute, second, weekday, yearday)
-# gmtime() restituisce una tupla in UTC, localtime() restituisce una tupla local time.
-# Il formato della tupla è:
-# (anno, mese da 1-12, giorno del mese da 1-31, ora tra 0-23, minuti tra 0-59,
-# secondi tra 0-59, giorno settimana tra 0-6 per lun-dom, giorno dell'anno tra1-366)
-def date_hour():
-  ntptime.settime()
-  date_time = time.localtime()
-  #anno, mese, giorno, ora, minuti, secondi, week_day, year_day = time.localtime()
-  return date_time
-############ END DEFINIZIONE FUNZIONI ###################################
-
-############ START CONNECTRING ##########################################
-wifi_connect(WIFI_SSID, WIFI_PASSWORD)
-#########################################################################
-
-############ CONNESSIONE A MQTT #########################################
 # MQTT Server Parameters
-MQTT_CLIENT_ID = "clientId-d30TD4Chy2"
+MQTT_CLIENT_ID = "micropython-weather-"+random_string()
 MQTT_BROKER = "broker.mqttdashboard.com"
 MQTT_USER = ""
 MQTT_PASSWORD = ""
-MQTT_TOPIC = "pm-sds011-test1"
+MQTT_TOPIC = "pm-sds011"
 
-# mqtt init
+
+# Serial configuration
+print("Configuring serial...")
+from machine import UART
+uart = UART(1, baudrate = 9600, rx = 16, tx = 17)
+
+# Sensor configuration
+print("Configuring sensor...")
+import sds011
+dust_sensor = sds011.SDS011(uart)
+dust_sensor.wake()
+# Following for-cycle is needed because reading from sensors could be
+# temporarly not available
+for numero in range(20):
+    dust_sensor.read()
+
+# WiFi configuration
+print("Connecting to WiFi...", end="")
+(ip,wlan_mac) = wifi_connect(WIFI_SSID,WIFI_PASSWORD)
+esp32_unique_id = "123" #unique_id(wlan_mac)
+
+# MQTT init
+from umqtt.simple import MQTTClient
 print("Connecting to MQTT server... ", end="")
 client = MQTTClient(MQTT_CLIENT_ID, MQTT_BROKER, user=MQTT_USER, password=MQTT_PASSWORD)
 client.connect()
 print("Connected!")
-#########################################################################
 
-############ SENSORE COLLEGATO ALLA SERIALE #############################
-dust_sensor = sds011.SDS011(uart)
-# dust_sensor.sleep()
-dust_sensor.wake()
-# Il ciclo for è necessario perche' le letture dust_sensor.id1 e
-# dust_sensor.id2 che seguono potrebbero essere momentaneamente
-# non disponibili con conseguente errore
-for numero in range(20):
-  dust_sensor.read()
-#########################################################################
-
-############ LETTURA ID SENSORE (vedi modulo sds011 modificato) #########
-id1 = hex(dust_sensor.id1)
-id2 = hex(dust_sensor.id2)
-id_sensor = id1[2:].upper() + id2[2:].upper()
-# print_idSensor()
-#########################################################################
-
-############ CICLO DI LETTURA ###########################################
 while True:
-    # Datasheet says to wait for at least 30 seconds...
-    #print("Start fan for 5 seconds.")
-    dust_sensor.wake()
-    # time.sleep(5)
-
-    # Returns NOK if no measurement found in reasonable time
+    #Returns NOK if no measurement found in reasonable time
     status = dust_sensor.read()
-    # Returns NOK if checksum failed
+    #Returns NOK if checksum failed
     pkt_status = dust_sensor.packet_status
 
-    # Stop fan
-    # dust_sensor.sleep()
+    if(status == False):
+        print('Measurement failed.')
+    elif(pkt_status == False):
+        print('Received corrupted data.')
 
-    if status == False:
-        print("Measurement failed.")
-    elif pkt_status == False:
-        print("Received corrupted data.")
     # mqtt message packing
-    #message = ujson.dumps(
-    #  {
-    #    "ID SENSORE": id_sensor,
-    #    "PM10": dust_sensor.pm10,
-    #    "PM25": dust_sensor.pm25,
-    #  }
-    #)
-    #print("{}:".format(message))
+    anno, mese, giorno, ora, minuti, secondi, week_day, year_day = date_time()
+    message = ujson.dumps(
+        {
+            "ID": esp32_unique_id,
+            "timestamp": f"{anno}-{mese:02d}-{giorno:02d}T{ora:02d}:{minuti:02d}:{secondi:02d}",
+            "PM10": dust_sensor.pm10,
+            "PM25": dust_sensor.pm25,
+        }
+    )
+    print(f"Reporting to MQTT topic {MQTT_TOPIC}: {message}")
 
-    date_hour()
-    anno, mese, giorno, ora, minuti, secondi, week_day, year_day = date_hour()
-    #message = f'{giorno}{"/"}{mese}{"/"}{anno}{" "}{ora}{":"}{minuti}{" -- ID sensore: "}{id_sensor}{" -- PM2.5: "}{dust_sensor.pm10}{" -- PM10: "}{dust_sensor.pm10}'
-    message = "{}/{}/{} [{}:{}] -- ID: {} -- PM2.5: {} -- PM10: {}"\
-      .format(giorno,mese,anno,ora+2,minuti,id_sensor,dust_sensor.pm25,dust_sensor.pm10)
-    print(message)
+    # mqtt message publishing
     client.publish(MQTT_TOPIC, message)
+    
     time.sleep(2)
+
+
+

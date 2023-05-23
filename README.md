@@ -20,7 +20,7 @@ I dati vengono inviati tramite il protocollo MQTT ad un broker online e successi
 
 Per il progetto abbiamo usato:
 
-- [Mu Editor](https://codewith.mu/) e [Thonny IDE](https://thonny.org/) come editor e per caricare il firmware di MicroPython sulle schede ESP32.
+- [Thonny IDE](https://thonny.org/) come editor e per caricare il firmware di MicroPython sulle schede ESP32.
 - per gestire la scheda in modo wireless si consiglia anche [WebREPL](https://bhave.sh/micropython-webrepl-thonny/?authuser=0)
 
 ## Connessione alla scheda
@@ -32,7 +32,8 @@ Di seguito le immagini per il corretto collegamento della scheda al sensore.
 ![Connessione-3](./images/connection-3.jpeg)
 
 ## Impostazioni WiFi
-Per configurare il wifi, creare il file src/secrets.py e mettere all'interno le seguenti righe:
+
+Per configurare il wifi, creare il file src/config.py e mettere all'interno le seguenti righe:
 
 ```py
 WIFI_SSID = "<ssid>"
@@ -40,3 +41,10 @@ WIFI_PASSWORD = "<password>"
 ```
 
 sostitutendo `<ssid>` e `<password>` con il nome e la password della vostra rete WiFi.
+
+## Controllo dei dati inviati ad MQTT
+1. Andare su http://www.hivemq.com/demos/websocket-client/
+2. Cliccare "Connect"
+3. Su Subscriptions, cliccare "Add New Topic Subscription"
+4. Nel campo Topic, digitare "pm-sds011" quindi cliccare su "Subscribe"
+
