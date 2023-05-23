@@ -1,0 +1,128 @@
+[
+    {
+        "id": "d4668de049bc03cb",
+        "type": "tab",
+        "label": "corso-monitoraggio",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "ca56cfe1d00fcac3",
+        "type": "mongodb out",
+        "z": "d4668de049bc03cb",
+        "mongodb": "6c6f2111913345e2",
+        "name": "",
+        "collection": "pm5",
+        "payonly": true,
+        "upsert": false,
+        "multi": false,
+        "operation": "insert",
+        "x": 930,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "ea9ad3cce74a9264",
+        "type": "mqtt in",
+        "z": "d4668de049bc03cb",
+        "name": "",
+        "topic": "pm-sds011",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "e560658b5193d68e",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 190,
+        "y": 360,
+        "wires": [
+            [
+                "ca56cfe1d00fcac3",
+                "cbf5be8434fad0a9"
+            ]
+        ]
+    },
+    {
+        "id": "cbf5be8434fad0a9",
+        "type": "debug",
+        "z": "d4668de049bc03cb",
+        "name": "debug 43",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 900,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "092a233e05ea597c",
+        "type": "inject",
+        "z": "d4668de049bc03cb",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "pm-sds011",
+        "payload": "{\"ID\":\"123\",\"PM10\":8.1,\"PM25\":6.1,\"timestamp\":\"2023-5-23T13:32:54\"}",
+        "payloadType": "json",
+        "x": 190,
+        "y": 220,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "6c6f2111913345e2",
+        "type": "mongodb",
+        "hostname": "your-mongodb-hostname",
+        "topology": "dnscluster",
+        "connectOptions": "",
+        "port": "27017",
+        "db": "test",
+        "name": "Corso docenti"
+    },
+    {
+        "id": "e560658b5193d68e",
+        "type": "mqtt-broker",
+        "name": "Hive MQ",
+        "broker": "mqtt-dashboard.com",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    }
+]
