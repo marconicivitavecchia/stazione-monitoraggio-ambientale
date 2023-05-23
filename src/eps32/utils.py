@@ -45,4 +45,5 @@ def date_time():
 def get_sensor_id(dust_sensor):
     id1 = hex(dust_sensor.id1)
     id2 = hex(dust_sensor.id2)
-    return id_sensor = id1[2:].upper() + id2[2:].upper()
+    return id1[2:].upper() + id2[2:].upper()
+
