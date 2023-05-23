@@ -58,11 +58,16 @@ for numero in range(20):
 # WiFi configuration
 print("Connecting to WiFi...", end="")
 (ip,wlan_mac) = wifi_connect(WIFI_SSID,WIFI_PASSWORD)
-esp32_unique_id = "123" #unique_id(wlan_mac)
+print(" Connected!")
+print(f"ip: {ip}, mac: {wlan_mac}")
+esp32_unique_id = unique_id(wlan_mac)
 
 # MQTT init
 from umqtt.simple import MQTTClient
-print("Connecting to MQTT server... ", end="")
+print("Connecting to MQTT server...")
+print(f"ClientID: {MQTT_CLIENT_ID}")
+print(f"Boroker: {MQTT_BROKER}")
+print(f"Topic: {MQTT_TOPIC}")
 client = MQTTClient(MQTT_CLIENT_ID, MQTT_BROKER, user=MQTT_USER, password=MQTT_PASSWORD)
 client.connect()
 print("Connected!")
@@ -93,7 +98,4 @@ while True:
     # mqtt message publishing
     client.publish(MQTT_TOPIC, message)
     
-    time.sleep(2)
-
-
-
+    time.sleep(5)

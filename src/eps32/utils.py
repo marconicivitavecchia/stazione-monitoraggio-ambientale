@@ -14,7 +14,7 @@ def random_string(length=8):
 
 def unique_id(wlan_mac):
     import ubinascii
-    ubinascii.hexlify(wlan_mac).decode()
+    return ubinascii.hexlify(wlan_mac).decode()
 
 
 def wifi_connect(ssid, key):
@@ -24,7 +24,6 @@ def wifi_connect(ssid, key):
     while not sta_if.isconnected():
         print(".", end="")
         time.sleep(0.1)
-    print(" Connected!")
     ip = sta_if.ifconfig()[0]
     wlan_mac = sta_if.config('mac')
     ntptime.settime()
