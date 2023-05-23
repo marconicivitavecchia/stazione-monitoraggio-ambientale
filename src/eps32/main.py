@@ -60,6 +60,7 @@ for numero in range(20):
     dust_sensor.read()
 pmSensorID = get_sensor_id(dust_sensor)
 
+
 # WiFi configuration
 print("Connecting to WiFi...", end="")
 (ip, wlan_mac) = wifi_connect(WIFI_SSID, WIFI_PASSWORD)
@@ -96,7 +97,7 @@ while True:
             "boardID": esp32_unique_id,
             "timestamp": f"{anno}-{mese:02d}-{giorno:02d}T{ora:02d}:{minuti:02d}:{secondi:02d}",
             "pmSensor": {
-                "sensorID" : pmSensorID,
+                "sensorID": pmSensorID,
                 "PM10": dust_sensor.pm10,
                 "PM25": dust_sensor.pm25,
             },
