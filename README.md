@@ -48,3 +48,14 @@ sostitutendo `<ssid>` e `<password>` con il nome e la password della vostra rete
 3. Su Subscriptions, cliccare "Add New Topic Subscription"
 4. Nel campo Topic, digitare "pm-sds011" quindi cliccare su "Subscribe"
 
+## Nodered
+Per collegare MQTT con il database NoSQL (nel nostro caso, MongoDB Atlas), abbiamo usato Node-RED installato localmente sul server della scoula.
+
+Il flusso nodered è estremamente semplice.
+ 
+![Nodered](./images/nodered.png)
+
+I nodi necessari sono:
+- [node-red-node-mongodb](https://flows.nodered.org/node/node-red-node-mongodb)
+
+Trovate il flusso da importare tra i file sorgente. È necessario configurare correttamente il broker MQTT e le credenziali di accesso al server MongoDB.
