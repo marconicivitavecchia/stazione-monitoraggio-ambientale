@@ -18,6 +18,9 @@ OTA updater for ESP32 running Micropython by David Flory
 Tutorial: https://randomnerdtutorials.com/esp32-esp8266-micropython-ota-updates/
 """
 
+from machine import UART
+from machine import reset as machine_reset
+
 # Manage debug
 import esp
 
@@ -44,8 +47,6 @@ MQTT_TOPIC = "pm-sds011"
 
 # Serial configuration
 print("Configuring serial...")
-from machine import UART
-
 uart = UART(1, baudrate=9600, rx=16, tx=17)
 
 # Sensor configuration
@@ -62,19 +63,16 @@ pmSensorID = get_sensor_id(dust_sensor)
 
 
 # WiFi configuration
-print("Connecting to WiFi...", end="")
+print(f"Connecting to WiFi {WIFI_SSID}...", end="")
 (ip, wlan_mac) = wifi_connect(WIFI_SSID, WIFI_PASSWORD)
 print(" Connected!")
-print(f"ip: {ip}, mac: {wlan_mac}")
+print(f"ip: {ip}, mac: {unique_id(wlan_mac)}")
 esp32_unique_id = unique_id(wlan_mac)
 
 # MQTT init
 from umqtt.simple import MQTTClient
 
-print("Connecting to MQTT server...")
-print(f"ClientID: {MQTT_CLIENT_ID}")
-print(f"Boroker: {MQTT_BROKER}")
-print(f"Topic: {MQTT_TOPIC}")
+print(f"Connecting to MQTT server with client id {MQTT_CLIENT_ID}...", end="")
 client = MQTTClient(MQTT_CLIENT_ID, MQTT_BROKER, user=MQTT_USER, password=MQTT_PASSWORD)
 client.connect()
 print("Connected!")
@@ -106,6 +104,12 @@ while True:
     print(f"Reporting to MQTT topic {MQTT_TOPIC}: {message}")
 
     # mqtt message publishing
-    client.publish(MQTT_TOPIC, message)
+    try:
+        client.publish(MQTT_TOPIC, message)
+    except OSError as e:
+        print(e)
+        print("Restarting board in 10 seconds...")
+        time.sleep(10)
+        machine_reset()
 
     time.sleep(5)
