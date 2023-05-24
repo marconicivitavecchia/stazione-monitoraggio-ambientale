@@ -85,8 +85,12 @@ while True:
 
     if status == False:
         print("Measurement failed.")
+        time.sleep(5)
+        continue
     elif pkt_status == False:
         print("Received corrupted data.")
+        time.sleep(5)
+        continue
 
     # mqtt message packing
     anno, mese, giorno, ora, minuti, secondi, week_day, year_day = date_time()
